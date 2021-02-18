@@ -134,7 +134,12 @@ class PCA9745B():
 
 
     def commit(self, uniq=True):
-        cmdvals = uniq and set(self.cmdvals) or self.cmdvals # remove dups
+        def _uniq(lst):
+            # remove dups while keeping original order
+            seen = set()
+            return [e for e in lst if not (e in seen or seen.add(e))]
+
+        cmdvals = uniq and _uniq(self.cmdvals) or self.cmdvals # remove dups
         for cmdval in cmdvals:
             bstr = bytes(cmdval) # 2 elem tuple -> bytestring of 2 bytes
             self._spi_write(bstr)
